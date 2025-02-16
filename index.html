@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1, user-scalable=no"
     />
     <title>Jeu de Poisson avec Émoticônes</title>
     <style>
@@ -14,12 +14,12 @@
         padding: 0;
         overflow: hidden;
         height: 100%;
-        touch-action: manipulation; /* Empêche le zoom sur mobile */
       }
       canvas {
         display: block;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
+        touch-action: none; /* Empêche les gestes tactiles par défaut */
       }
     </style>
   </head>
@@ -37,9 +37,11 @@
       window.addEventListener("resize", resizeCanvas);
       resizeCanvas();
 
+      // Chargement de l'image de fond
       const backgroundImage = new Image();
       backgroundImage.src = "fondBac.jpg";
 
+      // Définition du poisson
       const poisson = {
         x: 50,
         y: canvas.height / 2,
@@ -59,10 +61,12 @@
 
       function drawBackground() {
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-        ctx.globalAlpha = 0.2;
-        ctx.fillStyle = "white";
+
+        // Appliquer une opacité avec un rectangle semi-transparent
+        ctx.globalAlpha = 0.2; // Réglage de l'opacité (0 = transparent, 1 = opaque)
+        ctx.fillStyle = "white"; // Couleur du voile (peut être changé en "black" ou autre)
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 1; // Réinitialiser l'opacité pour les autres éléments
       }
 
       function drawPoisson() {
@@ -133,8 +137,11 @@
         drawBackground();
         drawPoisson();
         meduses.forEach((meduse) => drawMeduse(meduse.x, meduse.y));
+
+        // Ajuster la taille du texte en fonction de la taille de l'écran
+        const fontSize = Math.max(20, Math.min(canvas.width / 15, 40)); // Limite entre 20px et 40px
         ctx.fillStyle = "blue";
-        ctx.font = "bold 40px Arial";
+        ctx.font = `bold ${fontSize}px Arial`;
         ctx.fillText("Score: " + score, 20, 50);
       }
 
@@ -144,16 +151,15 @@
         requestAnimationFrame(loop);
       }
 
-      // 🎮 Ajouter le contrôle tactile
       document.addEventListener("keydown", (e) => {
         if (e.code === "Space") {
           poisson.dy = poisson.lift;
         }
       });
 
-      // 📱 Gérer le toucher sur mobile
-      document.addEventListener("touchstart", () => {
-        poisson.dy = poisson.lift;
+      document.addEventListener("touchstart", (e) => {
+        e.preventDefault(); // Empêche le comportement par défaut du touch (comme le zoom)
+        poisson.dy = poisson.lift; // Fait sauter le poisson
       });
 
       backgroundImage.onload = function () {
