@@ -30,6 +30,7 @@ const meduseHeight = 50;
 const meduseGap = 150;
 let meduseSpeed = 2;
 let score = 0;
+let gameOver = false;
 
 function drawBackground() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -59,6 +60,8 @@ function drawMeduse(x, y) {
 }
 
 function update() {
+  if (gameOver) return;
+
   poisson.dy += poisson.gravity;
   poisson.y += poisson.dy;
 
@@ -79,8 +82,7 @@ function update() {
       poisson.y < meduses[i].y + meduseHeight &&
       poisson.y + poisson.height > meduses[i].y
     ) {
-      alert("Game Over! Score: " + score);
-      document.location.reload();
+      gameOver = true;
     }
 
     if (meduses[i].x + meduseWidth < 0) {
@@ -110,6 +112,28 @@ function draw() {
   ctx.fillStyle = "blue";
   ctx.font = `bold ${fontSize}px Arial`;
   ctx.fillText("Score: " + score, 20, 50);
+
+  if (gameOver) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Fond semi-transparent
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // Dessiner un rectangle couvrant tout le canvas
+
+    ctx.fillStyle = "red";
+    ctx.font = "30px Arial";
+    ctx.fillText(
+      "Game Over! Score: " + score,
+      canvas.width / 2 - 100,
+      canvas.height / 2
+    );
+
+    setTimeout(() => {
+      score = 0;
+      meduses.length = 0;
+      poisson.y = canvas.height / 2;
+      poisson.dy = 0;
+      meduseSpeed = 2;
+      gameOver = false;
+    }, 2000);
+  }
 }
 
 function loop() {
