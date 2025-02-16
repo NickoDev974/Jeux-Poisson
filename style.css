@@ -1,0 +1,16 @@
+body,
+html {
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  height: 100%;
+  background-color: black;
+}
+
+canvas {
+  display: block;
+  margin: auto;
+  width: 95%;
+  height: 95%;
+  touch-action: none; /* Empêche les gestes tactiles par défaut */
+}
